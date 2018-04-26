@@ -1,0 +1,35 @@
+var fs = require('fs');
+
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
+
+var fileId = '15oygcHJrfDbWDl4BRSPHmPo26EN7us1RMnUiUPlluc4/';
+var dest = fs.createWriteStream('/public/file.csv');
+drive.files.export({
+   fileId: fileId,
+   mimeType: 'text/csv'
+})
+.on('end', function() {
+  console.log('Done');
+})
+.on('error', function(err) {
+  console.log('Error during download', err);
+})
+.pipe(dest);
+
+readTextFile('/public/file.csv');
