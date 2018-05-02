@@ -9,8 +9,8 @@ Here is a map example.
 
 This project aims to create a prototype of wappo game, with only one map. However the prototype will load maps dynamically, so if you want to contribute with this project without coding, thinking in <strike>hard</strike> maps will be a really good help.
 
-The game will be developed in javascript, using MEAN Stack.
+The game will be developed in javascript.
 
 ## Keywords
 
-Wappo Game, MEAN Stack, Javascript, Canvas, HTML5
+Wappo Game, Javascript, Canvas, HTML5
