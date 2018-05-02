@@ -1,4 +1,4 @@
-#Wappo Game
+## Wappo Game
 
 Wappo is a famous puzzle game. There is a 7x7 board with monsters and one gate (to the victory).
 The wappo character moves one square in each turn, and the monsters move two squares, in order to get closer to wappo. If a monster can get wappo, he loses the game.
