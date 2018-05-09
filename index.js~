@@ -1,9 +1,0 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-var express = require('./config/express'), config = require('./config/config');
-
-app = express();
-app.listen(port);
-
-module.exports = app;
-
-console.log(process.env.NODE_ENV + 'Server (express) running at http://localhost:' + port);
