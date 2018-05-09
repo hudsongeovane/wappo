@@ -139,16 +139,14 @@ function map(loadmap) {
                     this.GAMESTATE = 5;
                 }
                 //after wappo moves. add monster movements
-                if (this.monsterMoviments.length == 0) for(i = 0; i < this.monsters.length; i += 2) {
-                    if (this.monsters[i] >= 20) {
-                        this.monsterMoviments.push(i);
-                        this.monsterMoviments.push(i);
-                        this.monsterMoviments.push(i);
-                    }
-                    else {
-                        this.monsterMoviments.push(i);
-                        this.monsterMoviments.push(i);
-                    }
+                for(i = 0; i < this.monsters.length; i += 2) {
+                    this.monsterMoviments.push(i);
+                }
+                for(i = 0; i < this.monsters.length; i += 2) {
+                    this.monsterMoviments.push(i);
+                }
+                for(i = 0; i < this.monsters.length; i += 2) {
+                    if (this.monsters[i] > 20) this.monsterMoviments.push(i);
                 }
             }
         }
@@ -161,6 +159,12 @@ function map(loadmap) {
             ctx.font = "30px Arial";
             ctx.fillText("CONGRATULATIONS!",30,100);
             ctx.fillText("YOU WON!",100,150);
+            return;
+        }
+        if (this.GAMESTATE == -1) {
+            ctx.font = "30px Arial";
+            ctx.fillText("NOOB!",100,100);
+            ctx.fillText("YOU LOSE!",100,150);
             return;
         }
         //draw map
@@ -204,46 +208,52 @@ function map(loadmap) {
             this.monsterAnimate++;
             if (this.monsterAnimate == 3) this.monsterAnimate = 0;
         }
-        if (this.GAMESTATE == 33) { //make only one move
+        if (this.GAMESTATE == 33) { //make one move per monster
 
             //up = 0, right = 1, down = 2, left = 3
             //moving monsters.
             moved = false;
+            for(zz = 0; zz < this.monsters.length; zz += 2) {
+                i = this.monsterMoviments[0];
+                if (this.blockedMonster[i/2] > 0) {
+                    this.monsterMoviments.splice(0,1);
+                    if (this.monsterMoviments.length == 0) this.GAMESTATE = 2;
+                    else this.GAMESTATE = 3;
+                }
 
-            i = this.monsterMoviments[0];
-            if (this.blockedMonster[i/2] > 0) {
-                this.monsterMoviments.splice(0,1);
-                if (this.monsterMoviments.length == 0) this.GAMESTATE = 2;
-                else this.GAMESTATE = 3;
-            }
-
-            else {
-                _x1 = this.wappoX; _y1 = this.wappoY;
-                _x2 = this.monsters[i]%10; _y2 = this.monsters[i+1]%10; currentD = this.distance(_x1,_y1,_x2,_y2);
-                //direita
-                if (this.distance(_x1,_y1,_x2+1,_y2) < currentD && this.monsterCanGoTo(_x2,_y2,1)) {
-                    this.monsters[i] += 1;
-                    moved = true;
-                }
-                //esquerda
-                else if (this.distance(_x1,_y1,_x2-1,_y2) < currentD && this.monsterCanGoTo(_x2,_y2,3)) {
-                    this.monsters[i] -= 1;
-                    moved = true;
-                }
-                //cima
-                else if (this.distance(_x1,_y1,_x2,_y2-1) < currentD && this.monsterCanGoTo(_x2,_y2,0)) {
-                    this.monsters[i+1] -= 1;
-                    moved = true;
-                }
-                //baixo
-                else if (this.distance(_x1,_y1,_x2,_y2+1) < currentD && this.monsterCanGoTo(_x2,_y2,2)) {
-                    this.monsters[i+1] += 1;
-                    moved = true;
-                }
-                if (moved) {
-                    if (this.cells[7*(this.monsters[i+1]%10) + (this.monsters[i]%10)] & 64) {
-                        this.blockedMonster[i/2] = 4;
+                else {
+                    _x1 = this.wappoX; _y1 = this.wappoY;
+                    _x2 = this.monsters[i]%10; _y2 = this.monsters[i+1]%10; currentD = this.distance(_x1,_y1,_x2,_y2);
+                    //direita
+                    if (this.distance(_x1,_y1,_x2+1,_y2) < currentD && this.monsterCanGoTo(_x2,_y2,1)) {
+                        this.monsters[i] += 1;
+                        moved = true;
                     }
+                    //esquerda
+                    else if (this.distance(_x1,_y1,_x2-1,_y2) < currentD && this.monsterCanGoTo(_x2,_y2,3)) {
+                        this.monsters[i] -= 1;
+                        moved = true;
+                    }
+                    //cima
+                    else if (this.distance(_x1,_y1,_x2,_y2-1) < currentD && this.monsterCanGoTo(_x2,_y2,0)) {
+                        this.monsters[i+1] -= 1;
+                        moved = true;
+                    }
+                    //baixo
+                    else if (this.distance(_x1,_y1,_x2,_y2+1) < currentD && this.monsterCanGoTo(_x2,_y2,2)) {
+                        this.monsters[i+1] += 1;
+                        moved = true;
+                    }
+                    if (moved) {
+                        if (this.cells[7*(this.monsters[i+1]%10) + (this.monsters[i]%10)] & 64) {
+                            this.blockedMonster[i/2] = 4;
+                        }
+                    }
+                    if (this.distance(_x1,_y1,this.monsters[i]%10,this.monsters[i+1]%10) == 0) {
+                        this.GAMESTATE = -1;
+                        return;
+                    }
+
                     mergedmonsters = false;
                     for(k = 0; k < this.monsters.length; k += 2) {
                         if (k != i)
@@ -262,11 +272,11 @@ function map(loadmap) {
                                 break;
                             }
                     }
+
+                    this.monsterMoviments.splice(0,1);
                 }
-                else {
-                    this.monsterAnimate = 0;
-                }
-                this.monsterMoviments.splice(0,1);
+                this.monsterAnimate = 0;
+
                 if (this.monsterMoviments.length == 0) this.GAMESTATE = 2;
                 else this.GAMESTATE = 3;
             }
