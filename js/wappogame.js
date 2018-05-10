@@ -32,7 +32,7 @@ var firstMap = [
     
 	3,6,
 	
-	1,1,
+	0,1,
 	3,5
 	
     //or more...
