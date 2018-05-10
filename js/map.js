@@ -45,7 +45,6 @@ function map(loadmap) {
         return true;
     };
     this.distance = function(x1,y1,x2,y2) {
-        console.log(x1 + "-" + y1 + "-" + x2 + "-" + y2);
         return Math.abs(y2-y1) + Math.abs(x2-x1);
     }
     this.canGoTo = function(to) {
@@ -226,6 +225,7 @@ function map(loadmap) {
                     _x2 = this.monsters[i]%10; _y2 = this.monsters[i+1]%10; currentD = this.distance(_x1,_y1,_x2,_y2);
                     //direita
                     if (this.distance(_x1,_y1,_x2+1,_y2) < currentD && this.monsterCanGoTo(_x2,_y2,1)) {
+			
                         this.monsters[i] += 1;
                         moved = true;
                     }
@@ -248,13 +248,22 @@ function map(loadmap) {
                         if (this.cells[7*(this.monsters[i+1]%10) + (this.monsters[i]%10)] & 64) {
                             this.blockedMonster[i/2] = 4;
                         }
+			if (this.distance(_x1,_y1,this.monsters[i]%10,this.monsters[i+1]%10) == 0) {
+                        	this.GAMESTATE = -1;
+                        	return;
+                    	}
                     }
-                    if (this.distance(_x1,_y1,this.monsters[i]%10,this.monsters[i+1]%10) == 0) {
-                        this.GAMESTATE = -1;
-                        return;
-                    }
+                    this.monsterMoviments.splice(0,1);
+                }
+		
 
-                    mergedmonsters = false;
+                this.monsterAnimate = 0;
+
+                if (this.monsterMoviments.length == 0) this.GAMESTATE = 2;
+                else this.GAMESTATE = 3;
+            }
+		for(i = 0; i < this.monsters.length; i += 2) {
+		    mergedmonsters = false;
                     for(k = 0; k < this.monsters.length; k += 2) {
                         if (k != i)
                             if (!this.distance(this.monsters[i]%10,this.monsters[i+1]%10,this.monsters[k]%10,this.monsters[k+1]%10)) {
@@ -272,14 +281,7 @@ function map(loadmap) {
                                 break;
                             }
                     }
-
-                    this.monsterMoviments.splice(0,1);
-                }
-                this.monsterAnimate = 0;
-
-                if (this.monsterMoviments.length == 0) this.GAMESTATE = 2;
-                else this.GAMESTATE = 3;
-            }
+		}
         }
 
         //draw monsters
